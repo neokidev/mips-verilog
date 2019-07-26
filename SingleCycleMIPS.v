@@ -13,7 +13,7 @@ ID ID0 (.CLK(CLK), .RST(RST), .Ins(Ins), .Wdata(Wdata),
       .Rdata1(Rdata1), .Rdata2(Rdata2), .Ed32(Ed32));
 EX EX0 (.CLK(CLK), .RST(RST), .Ins(Ins), .Rdata1(Rdata1), .Rdata2(Rdata2),
       .Ed32(Ed32), .nextPC(nextPC), .Result(Result), .newPC(newPC));
-DM DM0 (.CLK(CLK), .RST(RST), .Result(Result), .Rdata2(Rdata2), .nextPC(nextPC),
+MA MA0 (.CLK(CLK), .RST(RST), .Result(Result), .Rdata2(Rdata2), .nextPC(nextPC),
       .Ins(Ins), .Wdata(Wdata));
 
 endmodule
