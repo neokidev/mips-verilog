@@ -1,6 +1,5 @@
 `timescale 1 ps/ 1 ps
 
-
 module SingleClockMIPS_sim();
 parameter PERIOD=10000;  // (clock period)/2
 
@@ -10,6 +9,7 @@ parameter PERIOD=10000;  // (clock period)/2
   reg rst;
   reg WE;
   reg [31:0] W_Ins;
+  reg [5:0] row;
 // wires
   wire [31:0] PC, Result;
 
@@ -24,27 +24,28 @@ SingleClockMIPS SingleClockMIPS0 (
   .Result(Result)
 );
 
-// rst
-initial
-begin
+initial begin
   rst =              1'b1;
   WE =               1'b0;
   W_Ins =            32'b0;
+  row =              5'b0;
 end
 
-always
-begin
-  rst =       1'b1;
-  rst = #1500 1'b0;
-        #500000;
+always begin
+  rst =      1'b1;
+  rst = #500 1'b0;
+        #50000;
 end
 
-// clk
-always
-begin
-  clk =       1'b0;
+always begin
+  clk =      1'b0;
   clk = #500 1'b1;
         #500;
 end
 
+always @ (posedge clk) begin
+  row = row + 1;
+  if (row == 10)
+    $stop;
+end
 endmodule

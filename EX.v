@@ -65,7 +65,6 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
         SRAV: result = $signed(rdata2) >>> rdata1;
         // Multiply
       endcase
-
     end
     // I and J format
     else begin

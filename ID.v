@@ -5,7 +5,7 @@ module ID (
 );
 `include "common_param.vh"
 
-  reg [31:0] Reg[0:31];
+  reg [31:0] Reg[0:REGFILE_SIZE-1];
 
   integer i;
   initial begin

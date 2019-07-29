@@ -8,7 +8,11 @@ module IF (
 
   reg [31:0] IMem[0:IMEM_SIZE-1];
 
-  initial $readmemb(IMEM_FILE_PATH, IMem);
+  initial begin
+    $readmemb(IMEM_FILE_PATH, IMem);
+    PC = 32'b0;
+    nextPC = 32'b0;
+  end
 
   always @ (posedge CLK) begin
     if ( RST ) begin
