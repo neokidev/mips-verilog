@@ -36,7 +36,7 @@ module ID (
     end
     // I format
     else begin
-      Outputs = {reg1, 32'b0, {{16{Ins[15]}}, Ins[15:0]}};
+      Outputs = {reg1, reg2, {{16{Ins[15]}}, Ins[15:0]}};
     end
   endfunction
 
