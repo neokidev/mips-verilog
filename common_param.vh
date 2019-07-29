@@ -6,7 +6,7 @@ parameter IMEM_SIZE = 64;
 parameter REGFILE_SIZE = 32;
 parameter DMEM_SIZE = 1024;
 
-parameter IMEM_FILE_PATH = "sample1.bin";
+parameter IMEM_FILE_PATH = "samples/sample01.txt";
 
 // operation codes (*) Op==6'd0
 parameter R_FORM = 6'd0;

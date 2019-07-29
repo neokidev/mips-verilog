@@ -1,0 +1,9 @@
+ADDI r1, r0, 1
+SW   r1, 0(r11)
+ADDI r1, r0, 2
+SW   r1, 4(r11)
+ADDI r1, r0, 3
+SW   r1, 8(r11)
+LW   r1, 0(r11)
+LW   r1, 4(r11)
+LW   r1, 8(r11)
