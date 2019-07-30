@@ -18,10 +18,23 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
 
   reg [31:0] HI, LO;
 
-  // always @ (posedge CLK) begin
-  //  HI <= ;
-  //  LO <= ;
-  // end
+  always @ (posedge CLK) begin
+    if (Op == R_FORM)
+      case (Func)
+        MULT: {HI, LO} = {32'b0, Rdata1} * {32'b0, Rdata2};
+        MULTU: {HI, LO} = {{32{Rdata1[31]}}, Rdata1} * {{32{Rdata2[31]}}, Rdata2};
+        DIV: begin
+          HI = Rdata1 % Rdata2;
+          LO = Rdata1 / Rdata2;
+        end
+        DIVU: begin
+          HI = Rdata1 % Rdata2;
+          LO = Rdata1 / Rdata2;
+        end
+        MTHI: HI = Rdata1;
+        MTLO: LO = Rdata1;
+      endcase
+  end
 
   function [31:0] result;
     input [5:0] op, func;
@@ -48,9 +61,9 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
         // Nor
         NOR: result = ~(rdata1 | rdata2);
         // Set on Less Than
-        SLT: result = $signed(rdata1) < $signed(rdata2) ? 32'd1 : 32'd0;
+        SLT: result = $signed(rdata1) < $signed(rdata2) ? 32'b1 : 32'b0;
         // Set on Less Than Unsigned
-        SLTU: result = rdata1 < rdata2 ? 32'd1 : 32'd0;
+        SLTU: result = rdata1 < rdata2 ? 32'b1 : 32'b0;
         // Shift Left Logical
         SLL: result = rdata2 << shamt;
         // Shift Right Logical
@@ -63,7 +76,11 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
         SRLV: result = rdata2 >> rdata1;
         // Shift Right Arithmetic Variable
         SRAV: result = $signed(rdata2) >>> rdata1;
-        // Multiply
+        // Move from HI
+        MFHI: result = HI;
+        // Move from LO
+        MFLO: result = LO;
+        default: result = 32'b0;
       endcase
     end
     // I and J format
