@@ -1,6 +1,6 @@
 module ID (
   input CLK, RST,
-  input [31:0] Ins, Wdata,
+  input [31:0] Ins, Wdata, nextPC,
   output [31:0] Rdata1, Rdata2, Ed32
 );
 `include "common_param.vh"
@@ -15,10 +15,15 @@ module ID (
   end
 
   always @(posedge CLK) begin
-    if (Ins[31:26] == R_FORM)
-      Reg[Ins[15:11]] <= Wdata;
-    else
-      Reg[Ins[20:16]] <= Wdata;
+    case (Ins[31:26])
+      R_FORM:
+        case (Ins[5:0])
+          JALR: Reg[Ins[15:11]] <= nextPC;
+          default Reg[Ins[15:11]] <= Wdata;
+        endcase
+      JAL: Reg[REGFILE_SIZE - 1] <= nextPC;
+      default: Reg[Ins[20:16]] <= Wdata;
+    endcase
   end
 
   wire [31:0] reg1, reg2;

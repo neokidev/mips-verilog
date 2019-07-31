@@ -16,12 +16,12 @@ module IF (
 
   always @ (posedge CLK) begin
     if ( RST ) begin
-      PC = 32'b0;
-      nextPC = 32'b0;
+      PC = 0;
+      nextPC = 4;
     end
     else begin
       PC = newPC;
-      nextPC = PC + 3'd4;
+      nextPC = PC + 4;
     end
   end
 

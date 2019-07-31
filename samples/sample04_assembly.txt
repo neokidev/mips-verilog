@@ -1,0 +1,11 @@
+ADDI r1, r0, 32
+ADDI r8, r0, 1
+JAL 16
+J 40
+ADDI r8, r8, 2
+JALR r1, r2
+ADDI r8, r8, 4
+JR   $ra
+ADDI r8, r8, 3
+JR   r2
+ADDI r8, r8, 5

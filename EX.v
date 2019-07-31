@@ -104,6 +104,7 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
         ORI: result = rdata1 | ed32;
         // Exclusive Or Immediate
         XORI: result = rdata1 ^ ed32;
+        default: result = 32'b0;
       endcase
     end
   endfunction
@@ -120,11 +121,15 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
         case (func)
           // Jump Register
           JR: newpc = rdata1;
+          // Jump and Link Register
+          JALR: newpc = rdata1;
           // Others
           default: newpc = nextpc;
         endcase
       // Jump
       J: newpc = {nextpc[31:28], address};
+      // Jump and Link
+      JAL: newpc = {nextpc[31:28], address};
       // Others
       default: newpc = nextpc;
     endcase
