@@ -127,9 +127,9 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
           default: newpc = nextpc;
         endcase
       // Jump
-      J: newpc = {nextpc[31:28], address};
+      J: newpc = {nextpc[31:28], 4 * address};
       // Jump and Link
-      JAL: newpc = {nextpc[31:28], address};
+      JAL: newpc = {nextpc[31:28], 4 * address};
       // Others
       default: newpc = nextpc;
     endcase

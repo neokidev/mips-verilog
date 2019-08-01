@@ -1,7 +1,7 @@
 ADDI r1, r0, 32
 ADDI r8, r0, 1
-JAL 16
-J 40
+JAL 4
+J 10
 ADDI r8, r8, 2
 JALR r1, r2
 ADDI r8, r8, 4
