@@ -130,6 +130,10 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
       J: newpc = {nextpc[31:28], 4 * address};
       // Jump and Link
       JAL: newpc = {nextpc[31:28], 4 * address};
+      // Branch on Equal
+      BEQ: newpc = rdata1 == rdata2 ? nextpc + 4 * ed32 : nextpc;
+      // Branch on Not Equal
+      BNE: newpc = rdata1 != rdata2 ? nextpc + 4 * ed32 : nextpc;
       // Others
       default: newpc = nextpc;
     endcase
