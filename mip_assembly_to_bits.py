@@ -39,23 +39,64 @@ registers = {
 }
 
 opcode = {
-    'ADD':   '100000',
-    'ADDI':  '001000',
     'LW':    '100011',
-    'SW':    '101011'
+    'SW':    '101011',
+
+    'ADD':   '100000',
+    'ADDU':  '100001',
+    'SUB':   '100010',
+    'SUBU':  '100011',
+    'AND':   '100100',
+    'OR':    '100101',
+    'XOR':   '100110',
+    'NOR':   '100111',
+    'SLT':   '101010',
+    'SLTU':  '101011',
+
+    'ADDI':  '001000',
+    'ADDIU': '001001',
+    'SLTI':  '001010',
+    'SLTIU': '001011',
+    'ANDI':  '001100',
+    'ORI':   '001101',
+    'XORI':  '001110',
+    'LUI':   '001111',
+
+    'SLL':   '000000',
+    'SRL':   '000010',
+    'SRA':   '000011',
+    'SLLV':  '000100',
+    'SRLV':  '000110',
+    'SRAV':  '000111',
+
+    'MFHI':  '010000',
+    'MTHI':  '010001',
+    'MFLO':  '010010',
+    'MTLO':  '010011',
+    'MULT':  '011000',
+    'MULTU': '011001',
+    'DIV':   '011010',
+    'DIVU':  '011011',
+
+    'JR':    '001000',
+    'JALR':  '001001',
+    'J':     '000010',
+    'JAL':   '000011',
+    'BEQ':   '000100',
+    'BNE':   '000101',
+    'BLEZ':  '000110',
+    'BGTZ':  '000111'
 }
 
 
 FLAGS = flags.FLAGS
-
 flags.DEFINE_string(
     'input', None, 'Input mips assemply file path.', short_name='i')
-
 flags.DEFINE_string(
     'output', None, 'Output mips bit stream file path.', short_name='o')
-
 flags.DEFINE_bool(
-    'split_by_underscore', False, 'Split bit stream by underscore or not.', short_name='s')
+    'split_by_underscore', False,
+    'Split bit stream by underscore or not.', short_name='s')
 
 
 def bits_concat(*args, split_by_underscore=False):
@@ -78,28 +119,57 @@ def main(argv):
         for i, _line in enumerate(f.readlines()):
             line = _line.rstrip('\n')
             line_split = line.split(':')
+            # ラベルを含まない行
             if len(line_split) == 1:
-                inss.append(line_split[0])
+                inss.append(line_split[0].strip())
+            # ラベルを含む行
             else:
                 label = line_split[0]
                 labels[label] = i
-                inss.append(line_split[1])
+                inss.append(line_split[1].strip())
+    print('labels:', labels)
 
     for i, ins in enumerate(inss):
+        print('ins:', ins)
+        if len(ins) == 0:
+            if i < len(inss) - 1:
+                if i == 0:
+                    with output.open('w') as f:
+                        f.write('\n')
+                else:
+                    with output.open('a') as f:
+                        f.write('\n')
+            continue
+
         for j, c in enumerate(ins):
             if c == ' ':
                 op, others = ins[:j], ins[j+1:]
                 break
 
         others = [o.strip() for o in others.split(',')]
-        if op in ('ADD',):
+        if op in ('ADD', 'SUB', 'ADDU', 'SUBU', 'AND', 'OR', 'NOR', 'XOR',
+                  'SLT', 'SLTU'):
             r0, r1, r2 = others
             r0 = registers[r0]
             r1 = registers[r1]
             r2 = registers[r2]
             bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
-        elif op in ('ADDI',):
+        elif op in ('SLLV', 'SRLV', 'SRAV'):
+            r0, r1, r2 = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            r2 = registers[r2]
+            bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
+        elif op in ('SLL', 'SRL', 'SRA'):
+            r0, r1, shamt = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            shamt = format(int(shamt), '05b')
+            bits = bits_concat('000000', '00000', r1, r0, shamt, opcode[op],
+                               split_by_underscore=split_by_underscore)
+        elif op in ('ADDI', 'ADDIU', 'ANDI', 'ORI', 'XORI', 'SLTI', 'SLTIU'):
             r0, r1, immd = others
             r0 = registers[r0]
             r1 = registers[r1]
@@ -115,6 +185,40 @@ def main(argv):
             offset = format(int(offset), '016b')
             bits = bits_concat(opcode[op], r1, r0, offset,
                                split_by_underscore=split_by_underscore)
+        elif op in ('BEQ', 'BNE'):
+            r0, r1, label = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            offset = labels[label]
+            offset = format(int(offset), '016b')
+            bits = bits_concat(opcode[op], r0, r1, offset,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('BGEZ', 'BGTZ', 'BLEZ', 'BLTZ'):
+            r0, offset = others
+            r0 = registers[r0]
+            offset = format(int(offset), '016b')
+            bits = bits_concat(opcode[op], r0, '00000', offset,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('J', 'JAL'):
+            label = others[0]
+            address = labels[label]
+            address = format(int(address), '026b')
+            bits = bits_concat(opcode[op], address,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('JR',):
+            r0 = others[0]
+            r0 = registers[r0]
+            bits = bits_concat('000000', r0, '00000', '00000', '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
+        elif op in ('JALR',):
+            r0, r1 = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            bits = bits_concat('000000', r0, '00000', r1, '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
+        else:
+            print(op, others)
+            raise NotImplementedError
 
         if i == 0:
             with output.open('w') as f:
