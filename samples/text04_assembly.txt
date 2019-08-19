@@ -1,0 +1,21 @@
+     ADD  $a0, $zero, $s0
+     JAL  sum
+     ADD  $s1, $zero, $v0
+     J    end
+sum: ADDI $sp, $sp, -8
+     SW   $s0, 0($sp)
+     SW   $s1, 4($sp)
+     ADD  $s1, $zero, $zero
+     ADD  $s0, $zero, $zero
+L1:  SLT  $t0, $s0, $a0
+     BEQ  $t0, $zero, N1
+     ADD  $s1, $s1, $s0
+     ADDI $s1, $s1, 1
+     ADDI $s0, $s0, 1
+     J    L1
+N1:  ADD  $v0, $zero, $s1
+     LW   $s1, 4($sp)
+     LW   $s0, 0($sp)
+     ADDI $sp, $sp, 8
+     JR   $ra
+end:
