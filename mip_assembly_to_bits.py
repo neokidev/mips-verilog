@@ -190,13 +190,13 @@ def main(argv):
             r0 = registers[r0]
             r1 = registers[r1]
             offset = labels[label]
-            offset = format(int(offset), '016b')
+            offset = format(int(offset) - i - 1, '016b')
             bits = bits_concat(opcode[op], r0, r1, offset,
                                split_by_underscore=split_by_underscore)
         elif op in ('BGEZ', 'BGTZ', 'BLEZ', 'BLTZ'):
             r0, offset = others
             r0 = registers[r0]
-            offset = format(int(offset), '016b')
+            offset = format(int(offset) - i - 1, '016b')
             bits = bits_concat(opcode[op], r0, '00000', offset,
                                split_by_underscore=split_by_underscore)
         elif op in ('J', 'JAL'):
