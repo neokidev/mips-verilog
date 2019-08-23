@@ -13,5 +13,17 @@ module MA (
     endcase
   end
 
-  assign Wdata = Ins[31:26] == LW ? DMem[Result>>2] : Result;
+  assign Wdata = wdata(Ins[31:26], DMem[Result>>2], Rdata2, Result);
+
+  function [31:0] wdata;
+    input [5:0] op;
+    input [31:0] rdata, rdata2, result;
+
+    if (op == LW)
+      wdata = rdata;
+    else if (op == SW)
+      wdata = rdata2;
+    else
+      wdata = result;
+  endfunction
 endmodule
