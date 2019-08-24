@@ -134,6 +134,18 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
       BEQ: newpc = rdata1 == rdata2 ? nextpc + 4 * ed32 : nextpc;
       // Branch on Not Equal
       BNE: newpc = rdata1 != rdata2 ? nextpc + 4 * ed32 : nextpc;
+      // BLTZ & BGEZ
+      BLTZ:
+        case (Ins[20:16])
+          // Branch on Less Than Zero
+          BLTZ_r: newpc = rdata1 < 0 ? nextpc + 4 * ed32 : nextpc;
+          // Branch on Greater Than or Equal to Zero
+          BGEZ_r: newpc = rdata1 >= 0 ? nextpc + 4 * ed32 : nextpc;
+        endcase
+      // Branch on Less Than or Equal to Zero
+      BLEZ: newpc = rdata1 <= 0 ? nextpc + 4 * ed32 : nextpc;
+      // Branch on Greater Than Zero
+      BGTZ: newpc = rdata1 > 0 ? nextpc + 4 * ed32 : nextpc;
       // Others
       default: newpc = nextpc;
     endcase
