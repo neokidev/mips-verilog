@@ -9,8 +9,9 @@ module ID (
 
   integer i;
   initial begin
-    for (i = 0; i < 32; i = i + 1) begin
-  		Reg[i] <= 32'b0;
+    Reg[0] <= 32'b0; // $zero
+    for (i = 1; i < REGFILE_SIZE; i = i + 1) begin
+  		Reg[i] <= 32'd2048;
    	end
   end
 
@@ -41,7 +42,16 @@ module ID (
     end
     // I format
     else begin
-      Outputs = {reg1, reg2, {{16{Ins[15]}}, Ins[15:0]}};
+      case (Ins[31:26])
+        // Calculate Ed32 with Unsigned Extension
+        ANDI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        ORI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        XORI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        LW: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        SW: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        // Calculate Ed32 with Signed Extension
+        default: Outputs = {reg1, reg2, {{16{Ins[15]}}, Ins[15:0]}};
+      endcase
     end
   endfunction
 
