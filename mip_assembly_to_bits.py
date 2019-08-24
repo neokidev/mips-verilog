@@ -173,7 +173,7 @@ def main(argv):
             r0, r1, immd = others
             r0 = registers[r0]
             r1 = registers[r1]
-            immd = format(int(immd), '016b')
+            immd = format(int(immd) & 0xffff, '016b')
             bits = bits_concat(opcode[op], r1, r0, immd,
                                split_by_underscore=split_by_underscore)
         elif op in ('LW', 'SW'):
