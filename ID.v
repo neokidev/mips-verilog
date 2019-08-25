@@ -7,6 +7,7 @@ module ID (
 
   reg [31:0] Reg[0:REGFILE_SIZE-1];
 
+  // Create Register File
   integer i;
   initial begin
     Reg[0] <= 32'b0; // $zero
@@ -15,10 +16,33 @@ module ID (
     end
   end
 
+  // Write to Register
   always @ (posedge CLK) begin
     case (Ins[31:26])
-      R_FORM: Reg[Ins[15:11]] <= Wdata;
+      R_FORM:
+        case (Ins[5:0])
+          // Not Write to Any Register
+          MULT:;
+          DIV:;
+          MULTU:;
+          DIVU:;
+          MTHI:;
+          MTLO:;
+          JR:;
+          // Write to rd Register
+          default: Reg[Ins[15:11]] <= Wdata;
+        endcase
+      // Not Write to Any Register
+      SW:;
+      BEQ:;
+      BNE:;
+      BGEZ:;
+      BGTZ:;
+      BLEZ:;
+      J:;
+      // Write to $ra Register
       JAL: Reg[REGFILE_SIZE - 1] <= Wdata;
+      // Write to rt Register
       default: Reg[Ins[20:16]] <= Wdata;
     endcase
   end
