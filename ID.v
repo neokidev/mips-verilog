@@ -11,11 +11,11 @@ module ID (
   initial begin
     Reg[0] <= 32'b0; // $zero
     for (i = 1; i < REGFILE_SIZE; i = i + 1) begin
-  		Reg[i] <= 32'd2048;
-   	end
+      Reg[i] <= 32'd2048;
+    end
   end
 
-  always @(posedge CLK) begin
+  always @ (posedge CLK) begin
     case (Ins[31:26])
       R_FORM: Reg[Ins[15:11]] <= Wdata;
       JAL: Reg[REGFILE_SIZE - 1] <= Wdata;
@@ -23,32 +23,27 @@ module ID (
     endcase
   end
 
-  wire [31:0] reg1, reg2;
-  assign reg1 = Reg[Ins[25:21]];
-  assign reg2 = Reg[Ins[20:16]];
+  assign {Rdata1, Rdata2, Ed32} = Outputs(Ins, Reg[Ins[25:21]], Reg[Ins[20:16]]);
 
-  assign {Rdata1, Rdata2, Ed32} = Outputs(Ins, reg1, reg2);
-
-  function [95:0] Outputs; // Outputs = {Rdata1, Rdata2, Ed32}
-    input [31:0] Ins, reg1, reg2;
-
+  function [95:0] Outputs ( // Outputs = {Rdata1, Rdata2, Ed32}
+    input [31:0] Ins, Rdata1, Rdata2
+  );
     // R format
     if (Ins[31:26] == R_FORM) begin
-      Outputs = {reg1, reg2, 32'b0};
+      Outputs = {Rdata1, Rdata2, 32'b0};
     end
     // I format
     else begin
       case (Ins[31:26])
         // Calculate Ed32 with Unsigned Extension
-        ANDI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
-        ORI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
-        XORI: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
-        LW: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
-        SW: Outputs = {reg1, reg2, {16'b0, Ins[15:0]}};
+        ANDI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
+        ORI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
+        XORI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
+        LW: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
+        SW: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
         // Calculate Ed32 with Signed Extension
-        default: Outputs = {reg1, reg2, {{16{Ins[15]}}, Ins[15:0]}};
+        default: Outputs = {Rdata1, Rdata2, {{16{Ins[15]}}, Ins[15:0]}};
       endcase
     end
   endfunction
-
 endmodule

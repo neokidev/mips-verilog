@@ -1,26 +1,18 @@
-module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
+module EX (
+  input CLK, RST,
+  input [31:0] Ins, Rdata1, Rdata2, Ed32, nextPC,
+  output [31:0] Result, newPC
+);
 `include "common_param.vh"
-  input CLK, RST;
-  input [31:0] Ins, Rdata1, Rdata2, Ed32, nextPC;
-  output [31:0] Result, newPC;
 
-  wire [5:0] Op, Func;
-  wire [4:0] Shamt;
-  wire [25:0] Address;
-
-  assign Op = Ins[31:26];
-  assign Func = Ins[5:0];
-  assign Shamt = Ins[10:6];
-  assign Address = Ins[25:0];
-
-  assign Result = result(Op, Func, Rdata1, Rdata2, Ed32, Shamt);
-  assign newPC = newpc(Op, Func, Rdata1, Rdata2, Ed32, nextPC, Shamt, Address);
+  assign Result = getResult(Ins, Rdata1, Rdata2, Ed32);
+  assign newPC = getnewPC(Ins, Rdata1, Rdata2, Ed32, nextPC);
 
   reg [31:0] HI, LO;
 
   always @ (posedge CLK) begin
-    if (Op == R_FORM)
-      case (Func)
+    if (Ins[31:26] == R_FORM)
+      case (Ins[5:0])
         MULT: {HI, LO} = {32'b0, Rdata1} * {32'b0, Rdata2};
         MULTU: {HI, LO} = {{32{Rdata1[31]}}, Rdata1} * {{32{Rdata2[31]}}, Rdata2};
         DIV: begin
@@ -36,119 +28,112 @@ module EX (CLK, RST, Ins, Rdata1, Rdata2, Ed32, nextPC, Result, newPC);
       endcase
   end
 
-  function [31:0] result;
-    input [5:0] op, func;
-    input [31:0] rdata1, rdata2, ed32;
-    input [4:0] shamt;
-
+  function [31:0] getResult (
+    input [31:0] Ins, Rdata1, Rdata2, Ed32
+  );
     // R format
-    if (op == R_FORM) begin
-      case (func)
+    if (Ins[31:26] == R_FORM) begin
+      case (Ins[5:0])
         // Add
-        ADD: result = rdata1 + rdata2;
+        ADD: getResult = Rdata1 + Rdata2;
         // Add Unsigned
-        ADDU: result = rdata1 + rdata2;
+        ADDU: getResult = Rdata1 + Rdata2;
         // Subtract
-        SUB: result = rdata1 - rdata2;
+        SUB: getResult = Rdata1 - Rdata2;
         // Subtract Unsigned
-        SUBU: result = rdata1 - rdata2;
+        SUBU: getResult = Rdata1 - Rdata2;
         // And
-        AND: result = rdata1 & rdata2;
+        AND: getResult = Rdata1 & Rdata2;
         // Or
-        OR: result = rdata1 | rdata2;
+        OR: getResult = Rdata1 | Rdata2;
         // Exclusive Or
-        XOR: result = rdata1 ^ rdata2;
+        XOR: getResult = Rdata1 ^ Rdata2;
         // Nor
-        NOR: result = ~(rdata1 | rdata2);
+        NOR: getResult = ~(Rdata1 | Rdata2);
         // Set on Less Than
-        SLT: result = $signed(rdata1) < $signed(rdata2) ? 32'b1 : 32'b0;
+        SLT: getResult = $signed(Rdata1) < $signed(Rdata2) ? 1 : 0;
         // Set on Less Than Unsigned
-        SLTU: result = rdata1 < rdata2 ? 32'b1 : 32'b0;
+        SLTU: getResult = Rdata1 < Rdata2 ? 1 : 0;
         // Shift Left Logical
-        SLL: result = rdata2 << shamt;
+        SLL: getResult = Rdata2 << Ins[10:6];
         // Shift Right Logical
-        SRL: result = rdata2 >> shamt;
+        SRL: getResult = Rdata2 >> Ins[10:6];
         // Shift Right Arithmetic
-        SRA: result = $signed(rdata2) >>> shamt;
+        SRA: getResult = $signed(Rdata2) >>> Ins[10:6];
         // Shift Left Logical Variable
-        SLLV: result = rdata2 << rdata1;
+        SLLV: getResult = Rdata2 << Rdata1;
         // Shift Right Logical Variable
-        SRLV: result = rdata2 >> rdata1;
+        SRLV: getResult = Rdata2 >> Rdata1;
         // Shift Right Arithmetic Variable
-        SRAV: result = $signed(rdata2) >>> rdata1;
+        SRAV: getResult = $signed(Rdata2) >>> Rdata1;
         // Move from HI
-        MFHI: result = HI;
+        MFHI: getResult = HI;
         // Move from LO
-        MFLO: result = LO;
-        default: result = 32'b0;
+        MFLO: getResult = LO;
+        default: getResult = 32'b0;
       endcase
     end
     // I and J format
     else begin
-      case (Op)
+      case (Ins[31:26])
         // Load Word
-        LW: result = rdata1 + ed32;
+        LW: getResult = Rdata1 + Ed32;
         // Store Word
-        SW: result = rdata1 + ed32;
+        SW: getResult = Rdata1 + Ed32;
         // Add Immediate
-        ADDI: result = rdata1 + ed32;
+        ADDI: getResult = Rdata1 + Ed32;
         // Add Immediate Unsigned
-        ADDIU: result = rdata1 + ed32;
+        ADDIU: getResult = Rdata1 + Ed32;
         // Set on Less Than Immediate
-        SLTI: result = $signed(rdata1) < $signed(ed32) ? 32'd1 : 32'd0;
+        SLTI: getResult = $signed(Rdata1) < $signed(Ed32) ? 32'd1 : 32'd0;
         // Set on Less Than Immediate Unsigned
-        SLTIU: result = rdata1 < ed32 ? 32'd1 : 32'd0;
+        SLTIU: getResult = Rdata1 < Ed32 ? 32'd1 : 32'd0;
         // And Immediate
-        ANDI: result = rdata1 & ed32;
+        ANDI: getResult = Rdata1 & Ed32;
         // Or Immediate
-        ORI: result = rdata1 | ed32;
+        ORI: getResult = Rdata1 | Ed32;
         // Exclusive Or Immediate
-        XORI: result = rdata1 ^ ed32;
-        default: result = 32'b0;
+        XORI: getResult = Rdata1 ^ Ed32;
+        default: getResult = 32'b0;
       endcase
     end
   endfunction
 
-
-  function [31:0] newpc;
-    input [5:0] op, func;
-    input [31:0] rdata1, rdata2, ed32, nextpc;
-    input [4:0] shamt;
-    input [25:0] address;
-
-    case (op)
+  function [31:0] getnewPC (
+    input [31:0] Ins, Rdata1, Rdata2, Ed32, nextPC
+  );
+    case (Ins[31:26])
       R_FORM:
-        case (func)
+        case (Ins[5:0])
           // Jump Register
-          JR: newpc = rdata1;
+          JR: getnewPC = Rdata1;
           // Jump and Link Register
-          JALR: newpc = rdata1;
+          JALR: getnewPC = Rdata1;
           // Others
-          default: newpc = nextpc;
+          default: getnewPC = nextPC;
         endcase
       // Jump
-      J: newpc = {nextpc[31:28], 4 * address};
+      J: getnewPC = {nextPC[31:28], 4 * Ins[25:0]};
       // Jump and Link
-      JAL: newpc = {nextpc[31:28], 4 * address};
+      JAL: getnewPC = {nextPC[31:28], 4 * Ins[25:0]};
       // Branch on Equal
-      BEQ: newpc = rdata1 == rdata2 ? nextpc + 4 * ed32 : nextpc;
+      BEQ: getnewPC = Rdata1 == Rdata2 ? nextPC + 4 * Ed32 : nextPC;
       // Branch on Not Equal
-      BNE: newpc = rdata1 != rdata2 ? nextpc + 4 * ed32 : nextpc;
+      BNE: getnewPC = Rdata1 != Rdata2 ? nextPC + 4 * Ed32 : nextPC;
       // BLTZ & BGEZ
       BLTZ:
         case (Ins[20:16])
           // Branch on Less Than Zero
-          BLTZ_r: newpc = rdata1 < 0 ? nextpc + 4 * ed32 : nextpc;
+          BLTZ_r: getnewPC = Rdata1 < 0 ? nextPC + 4 * Ed32 : nextPC;
           // Branch on Greater Than or Equal to Zero
-          BGEZ_r: newpc = rdata1 >= 0 ? nextpc + 4 * ed32 : nextpc;
+          BGEZ_r: getnewPC = Rdata1 >= 0 ? nextPC + 4 * Ed32 : nextPC;
         endcase
       // Branch on Less Than or Equal to Zero
-      BLEZ: newpc = rdata1 <= 0 ? nextpc + 4 * ed32 : nextpc;
+      BLEZ: getnewPC = Rdata1 <= 0 ? nextPC + 4 * Ed32 : nextPC;
       // Branch on Greater Than Zero
-      BGTZ: newpc = rdata1 > 0 ? nextpc + 4 * ed32 : nextpc;
+      BGTZ: getnewPC = Rdata1 > 0 ? nextPC + 4 * Ed32 : nextPC;
       // Others
-      default: newpc = nextpc;
+      default: getnewPC = nextPC;
     endcase
   endfunction
-
 endmodule
