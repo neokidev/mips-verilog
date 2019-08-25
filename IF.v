@@ -2,7 +2,8 @@ module IF (
   input CLK, RST, WE,
   input [31:0] newPC, W_Ins,
   output reg [31:0] PC, nextPC,
-  output [31:0] Ins
+  output [31:0] Ins,
+  reg pc_rst
 );
 `include "common_param.vh"
 
@@ -10,18 +11,23 @@ module IF (
 
   initial begin
     $readmemb(IMEM_FILE_PATH, IMem);
-    PC = 32'b0;
-    nextPC = 32'b0;
+    pc_rst = 1;
   end
 
   always @ (posedge CLK) begin
     if ( RST ) begin
-      PC = 0;
-      nextPC = 4;
+      pc_rst = 1;
     end
     else begin
-      PC = newPC;
-      nextPC = PC + 4;
+      if ( pc_rst ) begin
+        PC = 0;
+        nextPC = 4;
+      end
+      else begin
+        PC = newPC;
+        nextPC = newPC + 4;
+      end
+      pc_rst = 0;
     end
   end
 
