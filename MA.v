@@ -13,16 +13,20 @@ module MA (
     endcase
   end
 
-  assign Wdata = wdata(Ins[31:26], DMem[Result>>2], Rdata2, Result);
+  assign Wdata = wdata(Ins[31:26], DMem[Result>>2], Rdata2, Result, nextPC);
 
   function [31:0] wdata;
     input [5:0] op;
-    input [31:0] rdata, rdata2, result;
+    input [31:0] rdata, rdata2, result, nextpc;
 
     if (op == LW)
       wdata = rdata;
     else if (op == SW)
       wdata = rdata2;
+    else if (op == JAL)
+      wdata = nextpc;
+    else if (op == JALR)
+      wdata = nextpc;
     else
       wdata = result;
   endfunction
