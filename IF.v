@@ -2,11 +2,11 @@ module IF (
   input CLK, RST, WE,
   input [31:0] newPC, W_Ins,
   output reg [31:0] PC, nextPC,
-  output [31:0] Ins,
-  reg pc_rst
+  output [31:0] Ins
 );
 `include "common_param.vh"
 
+  reg pc_rst;
   reg [31:0] IMem[0:IMEM_SIZE-1];
 
   initial begin
