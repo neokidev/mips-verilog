@@ -15,14 +15,8 @@ module EX (
       case (Ins[5:0])
         MULT: {HI, LO} = {32'b0, Rdata1} * {32'b0, Rdata2};
         MULTU: {HI, LO} = {{32{Rdata1[31]}}, Rdata1} * {{32{Rdata2[31]}}, Rdata2};
-        DIV: begin
-          HI = Rdata1 % Rdata2;
-          LO = Rdata1 / Rdata2;
-        end
-        DIVU: begin
-          HI = Rdata1 % Rdata2;
-          LO = Rdata1 / Rdata2;
-        end
+        DIV: {HI, LO} = {Rdata1 % Rdata2, Rdata1 / Rdata2};
+        DIVU: {HI, LO} = {Rdata1 % Rdata2, Rdata1 / Rdata2};
         MTHI: HI = Rdata1;
         MTLO: LO = Rdata1;
       endcase
@@ -70,7 +64,7 @@ module EX (
         MFHI: getResult = HI;
         // Move from LO
         MFLO: getResult = LO;
-        default: getResult = 32'b0;
+        default: getResult = 0;
       endcase
     end
     // I and J format
@@ -85,16 +79,16 @@ module EX (
         // Add Immediate Unsigned
         ADDIU: getResult = Rdata1 + Ed32;
         // Set on Less Than Immediate
-        SLTI: getResult = $signed(Rdata1) < $signed(Ed32) ? 32'd1 : 32'd0;
+        SLTI: getResult = $signed(Rdata1) < $signed(Ed32) ? 1 : 0;
         // Set on Less Than Immediate Unsigned
-        SLTIU: getResult = Rdata1 < Ed32 ? 32'd1 : 32'd0;
+        SLTIU: getResult = Rdata1 < Ed32 ? 1 : 0;
         // And Immediate
         ANDI: getResult = Rdata1 & Ed32;
         // Or Immediate
         ORI: getResult = Rdata1 | Ed32;
         // Exclusive Or Immediate
         XORI: getResult = Rdata1 ^ Ed32;
-        default: getResult = 32'b0;
+        default: getResult = 0;
       endcase
     end
   endfunction

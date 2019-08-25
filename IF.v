@@ -35,5 +35,5 @@ module IF (
     if ( ~RST && WE ) IMem[PC>>2] <= W_Ins;
   end
 
-  assign Ins = RST? 32'd0: IMem[PC>>2];
+  assign Ins = RST? 0: IMem[PC>>2];
 endmodule
