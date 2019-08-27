@@ -6,33 +6,23 @@ module IF (
 );
 `include "common_param.vh"
 
-  reg pc_rst;
   reg [31:0] IMem[0:IMEM_SIZE-1];
 
   initial begin
     $readmemb(IMEM_FILE_PATH, IMem);
-    pc_rst = 1;
+    PC <= 0;
+    nextPC <= 4;
   end
 
-  always @ (posedge CLK) begin
+  always @ (posedge CLK or posedge RST) begin
     if ( RST ) begin
-      pc_rst = 1;
+      PC <= 0;
+      nextPC <= 4;
     end
     else begin
-      if ( pc_rst ) begin
-        PC = 0;
-        nextPC = 4;
-      end
-      else begin
-        PC = newPC;
-        nextPC = newPC + 4;
-      end
-      pc_rst = 0;
+      PC <= newPC;
+      nextPC <= newPC + 4;
     end
-  end
-
-  always @ (posedge CLK) begin
-    if ( ~RST && WE ) IMem[PC>>2] <= W_Ins;
   end
 
   assign Ins = RST? 0: IMem[PC>>2];
