@@ -28,9 +28,7 @@ module MA (
         LW: getWdata = Rdata;
         SW: getWdata = Rdata2;
         JAL: getWdata = nextPC;
-        /*
         JALR: getWdata = nextPC;
-        */
         default: getWdata = Result;
       endcase
     end

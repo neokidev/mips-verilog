@@ -24,7 +24,6 @@ module ID (
       case (Ins[31:26])
         R_FORM:
           case (Ins[5:0])
-            /*
             // Not Write to Any Register
             MULT:;
             DIV:;
@@ -32,7 +31,6 @@ module ID (
             DIVU:;
             MTHI:;
             MTLO:;
-            */
             JR:;
             // Write to rd Register
             default: Reg[Ins[15:11]] <= Wdata;
@@ -40,12 +38,10 @@ module ID (
         // Not Write to Any Register
         SW:;
         BEQ:;
-        /*
         BNE:;
         BGEZ:;
         BGTZ:;
         BLEZ:;
-        */
         J:;
         // Write to $ra Register
         JAL: Reg[REGFILE_SIZE - 1] <= Wdata;
@@ -71,12 +67,10 @@ module ID (
       // I format
       else begin
         case (Ins[31:26])
-          /*
           // Calculate Ed32 with Unsigned Extension
           ANDI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
           ORI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
           XORI: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
-          */
           LW: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
           SW: Outputs = {Rdata1, Rdata2, {16'b0, Ins[15:0]}};
           // Calculate Ed32 with Signed Extension
