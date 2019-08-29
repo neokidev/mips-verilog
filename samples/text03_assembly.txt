@@ -1,8 +1,4 @@
-L1: SLTI $t0, $s0, 10
-    BEQ  $t0, $zero, N1
-    SLL  $t0, $s0, 2
-    ADD  $t0, $s7, $t0
-    SW   $s0, 0($t0)
-    ADDI $s0, $s0, 1
-    J    L1
-N1:
+SLL   $t0, $t0, 2
+ADD   $t0, $s7, $t0
+LW    $s1, 0($t0)
+LW    $s2, 20($t7)

@@ -1,4 +1,2 @@
-SLL  $t0, $t0, 2
-ADD  $t0, $s7, $t0
-LW   $s1, 0($t0)
-LW   $s2, 20($t7)
+ADD   $t0, $s0, $s1
+ADD   $s3, $t0, $s2
