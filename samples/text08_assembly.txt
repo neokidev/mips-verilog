@@ -1,0 +1,43 @@
+       ADDI $a0, $zero, 3
+       ADDI $a1, $zero, 0
+       ADDI $a2, $zero, 1
+       ADDI $a3, $zero, 2
+       JAL  hanoi
+       J    end
+hanoi: ADDI $sp, $sp, -20
+       SW   $a0, 0($sp)
+       SW   $a1, 4($sp)
+       SW   $a2, 8($sp)
+       SW   $a3, 12($sp)
+       SW   $ra, 16($sp)
+       SLTI $t0, $a0, 2
+       BEQ  $t0, $zero, L1
+       ADD  $a2, $a3, $zero
+       JAL  move
+       LW   $a2, 8($sp)
+       LW   $ra, 16($sp)
+       ADDI $sp, $sp, 20
+       JR   $ra
+L1:    ADDI $a0, $a0, -1
+       LW   $a2, 12($sp)
+       LW   $a3, 8($sp)
+       JAL  hanoi
+       LW   $a0, 0($sp)
+       JAL  move
+       ADDI $a0, $a0, -1
+       LW   $a1, 8($sp)
+       LW   $a2, 4($sp)
+       LW   $a3, 12($sp)
+       JAL  hanoi
+       LW   $a0, 0($sp)
+       LW   $a1, 4($sp)
+       LW   $a2, 8($sp)
+       LW   $a3, 12($sp)
+       LW   $ra, 16($sp)
+       ADDI $sp, $sp, 20
+       JR   $ra
+move:  ADDI $a0, $a0, 0
+       ADDI $a1, $a1, 0
+       ADDI $a2, $a2, 0
+       JR   $ra
+end:
