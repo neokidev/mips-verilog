@@ -1,2 +1,5 @@
+ADDI  $s0, $zero, 1
+ADDI  $s1, $zero, 2
+ADDI  $s2, $zero, 3
 ADD   $t0, $s0, $s1
 ADD   $s3, $t0, $s2
