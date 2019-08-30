@@ -29,9 +29,9 @@ module SingleClockMIPS_sim();
   end
 
   always begin
-    rst =      1'b1;
-    rst = #500 1'b0;
-          #50000;
+    rst =       1'b1;
+    rst = #1000 1'b0;
+          #500000;
   end
 
   always begin
