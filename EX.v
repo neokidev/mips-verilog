@@ -13,9 +13,9 @@ module EX (
   always @ (posedge CLK) begin
     if (Ins[31:26] == R_FORM)
       case (Ins[5:0])
-        MULT: {HI, LO} <= {32'b0, Rdata1} * {32'b0, Rdata2};
-        MULTU: {HI, LO} <= {{32{Rdata1[31]}}, Rdata1} * {{32{Rdata2[31]}}, Rdata2};
-        DIV: {HI, LO} <= {Rdata1 % Rdata2, Rdata1 / Rdata2};
+        MULT: {HI, LO} <= $signed(Rdata1) * $signed(Rdata2);
+        MULTU: {HI, LO} <= Rdata1 * Rdata2;
+        DIV: {HI, LO} <= {$signed(Rdata1) % $signed(Rdata2), $signed(Rdata1) / $signed(Rdata2)};
         DIVU: {HI, LO} <= {Rdata1 % Rdata2, Rdata1 / Rdata2};
         MTHI: HI <= Rdata1;
         MTLO: LO <= Rdata1;
