@@ -127,10 +127,9 @@ def main(argv):
                 label = line_split[0]
                 labels[label] = i
                 inss.append(line_split[1].strip())
-    print('labels:', labels)
+    # print('labels:', labels)
 
     for i, ins in enumerate(inss):
-        print('ins:', ins)
         if len(ins) == 0:
             if i < len(inss) - 1:
                 if i == 0:
@@ -166,7 +165,7 @@ def main(argv):
             r0 = registers[r0]
             r1 = registers[r1]
             r2 = registers[r2]
-            bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
+            bits = bits_concat('000000', r2, r1, r0, '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
         elif op in ('SLL', 'SRL', 'SRA'):
             r0, r1, shamt = others
@@ -235,6 +234,8 @@ def main(argv):
         else:
             print(op, others)
             raise NotImplementedError
+
+        print(f'{i}: {ins} => {bits}')
 
         if i == 0:
             with output.open('w') as f:
