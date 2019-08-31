@@ -1,0 +1,11 @@
+    ADDI  $s7, $zero, 32
+    ADDI  $t0, $zero, 1
+    JAL   L1
+    J     N1
+L1: ADDI  $t0, $t0, 2
+    JALR  $s7, $s6
+    ADDI  $t0, $t0, 4
+    JR    $ra
+    ADDI  $t0, $t0, 3
+    JR    $s6
+N1: ADDI  $t0, $t0, 5

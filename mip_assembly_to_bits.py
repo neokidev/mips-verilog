@@ -84,6 +84,8 @@ opcode = {
     'JAL':   '000011',
     'BEQ':   '000100',
     'BNE':   '000101',
+    'BLTZ':  ('000001', '00000'),
+    'BGEZ':  ('000001', '00001'),
     'BLEZ':  '000110',
     'BGTZ':  '000111'
 }
@@ -205,14 +207,22 @@ def main(argv):
             r0 = registers[r0]
             r1 = registers[r1]
             offset = labels[label]
-            offset = format(int(offset) - i - 1, '016b')
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
             bits = bits_concat(opcode[op], r0, r1, offset,
                                split_by_underscore=split_by_underscore)
-        elif op in ('BGEZ', 'BGTZ', 'BLEZ', 'BLTZ'):
-            r0, offset = others
+        elif op in ('BGTZ', 'BLEZ'):
+            r0, label = others
             r0 = registers[r0]
-            offset = format(int(offset) - i - 1, '016b')
+            offset = labels[label]
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
             bits = bits_concat(opcode[op], r0, '00000', offset,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('BGEZ', 'BLTZ'):
+            r0, label = others
+            r0 = registers[r0]
+            offset = labels[label]
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
+            bits = bits_concat(opcode[op][0], r0, opcode[op][1], offset,
                                split_by_underscore=split_by_underscore)
         elif op in ('J', 'JAL'):
             label = others[0]

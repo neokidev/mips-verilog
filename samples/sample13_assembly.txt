@@ -1,0 +1,29 @@
+    ADDI  $t0, $zero, -1
+    ADDI  $t1, $zero, 0
+    ADDI  $t2, $zero, 1
+    ADDI  $s0, $zero, 1
+    BGEZ  $t0, L1
+    ADDI  $s0, $s0, 1
+    BGEZ  $t1, L1
+    ADDI  $s0, $s0, 1
+    BGEZ  $t2, L1
+    ADDI  $s0, $s0, 1
+L1: BGTZ  $t0, L2
+    ADDI  $s0, $s0, 1
+    BGTZ  $t1, L2
+    ADDI  $s0, $s0, 1
+    BGTZ  $t2, L2
+    ADDI  $s0, $s0, 1
+L2: BLEZ  $t2, L3
+    ADDI  $s0, $s0, 1
+    BLEZ  $t1, L3
+    ADDI  $s0, $s0, 1
+    BLEZ  $t0, L3
+    ADDI  $s0, $s0, 1
+L3: BLTZ  $t2, L4
+    ADDI  $s0, $s0, 1
+    BLTZ  $t1, L4
+    ADDI  $s0, $s0, 1
+    BLTZ  $t0, L4
+    ADDI  $s0, $s0, 1
+L4: ADDI  $s0, $s0, 1
