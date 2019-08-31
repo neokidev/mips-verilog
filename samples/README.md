@@ -7,6 +7,13 @@
 |sample05.txt|MULT，DIV，MULTU，DIVUの動作確認2|
 |sample06.txt|MULT，DIV，MULTU，DIVUの動作確認3|
 |sample07.txt|MULT，DIV，MULTU，DIVUの動作確認4|
+|sample08.txt|AND，OR，NOR，XOR，ANDI，ORI，XORIの動作確認|
+|sample09.txt|SLL，SRL，SRA，SLLV，SRLV，SRAVの動作確認|
+|sample10.txt|LW，SWの動作確認|
+|sample11.txt|SLT，SLTU，SLTI，SLTIUの動作確認|
+|sample12.txt|BEQ，BNEの動作確認|
+|sample13.txt|BGEZ，BGTZ，BLEZ，BLTZの動作確認|
+|sample14.txt|J，JAL，JR，JALRの動作確認|
 |text01.txt  |教科書p.63 データのロードとストア|
 |text02.txt  |教科書p.63 算術演算|
 |text03.txt  |教科書p.63 配列|

@@ -1,6 +1,6 @@
 ADDIU $t0, $zero, 20000
 ADDIU $t1, $zero, 30000
-ADDIU $t2, $zero, -30000
+ADDI  $t2, $zero, -30000
 ADD   $s0, $t0, $t1
 ADDU  $s1, $t0, $t1
 ADD   $s2, $t0, $t2
