@@ -155,6 +155,12 @@ def main(argv):
             r2 = registers[r2]
             bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
+        elif op in ('MULT', 'DIV', 'MULTU', 'DIVU'):
+            r0, r1 = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            bits = bits_concat('000000', r0, r1, '00000', '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
         elif op in ('SLLV', 'SRLV', 'SRAV'):
             r0, r1, r2 = others
             r0 = registers[r0]
@@ -184,6 +190,16 @@ def main(argv):
             r1 = registers[r1]
             offset = format(int(offset), '016b')
             bits = bits_concat(opcode[op], r1, r0, offset,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('MFHI', 'MFLO'):
+            r0 = others[0]
+            r0 = registers[r0]
+            bits = bits_concat('000000', '00000', '00000', r0, '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
+        elif op in ('MTHI', 'MTLO'):
+            r0 = others[0]
+            r0 = registers[r0]
+            bits = bits_concat('000000', r0, '00000', '00000', '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
         elif op in ('BEQ', 'BNE'):
             r0, r1, label = others
