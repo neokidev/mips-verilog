@@ -1,12 +1,6 @@
-ADDI r8, r0, 11
-ADDI r9, r0, 3
-MTHI r8
-MTLO r9
-MFHI r10
-MFLO r11
-MULT r8, r9
-MFHI r10
-MFLO r11
-DIV r8, r9
-MFHI r10
-MFLO r11
+ADDI  $t0, $zero, 11
+ADDI  $t1, $zero, 3
+MTHI  $t0
+MTLO  $t1
+MFHI  $s0
+MFLO  $s1

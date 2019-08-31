@@ -1,5 +1,12 @@
 |ファイル名    |説明|
 |:---        |:---|
+|sample01.txt|ADD，ADDIの動作確認（LMSのテストプログラム）|
+|sample02.txt|ADD，SUB，ADDU，SUBU，ADDIUの動作確認|
+|sample03.txt|MFHI，MFLO，MTHI，MTLOの動作確認|
+|sample04.txt|MULT，DIV，MULTU，DIVUの動作確認1|
+|sample05.txt|MULT，DIV，MULTU，DIVUの動作確認2|
+|sample06.txt|MULT，DIV，MULTU，DIVUの動作確認3|
+|sample07.txt|MULT，DIV，MULTU，DIVUの動作確認4|
 |text01.txt  |教科書p.63 データのロードとストア|
 |text02.txt  |教科書p.63 算術演算|
 |text03.txt  |教科書p.63 配列|

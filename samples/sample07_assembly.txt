@@ -1,11 +1,15 @@
-ADDI  $t0, $zero, -11
-ADDI  $t1, $zero, 3
+ADDI  $t0, $zero, -32767
+ADDI  $t1, $zero, 16384
+MULT  $t0, $t1
+MFLO  $t0
 MULT  $t0, $t1
 MFHI  $s0
 MFLO  $s1
 DIV   $t0, $t1
 MFHI  $s2
 MFLO  $s3
+MULTU $t0, $t1
+MFLO  $t0
 MULTU $t0, $t1
 MFHI  $s4
 MFLO  $s5
