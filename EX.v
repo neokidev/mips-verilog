@@ -122,14 +122,14 @@ module EX (
         BLTZ:
           case (Ins[20:16])
             // Branch on Less Than Zero
-            BLTZ_r: getnewPC = Rdata1 < 0 ? nextPC + 4 * Ed32 : nextPC;
+            BLTZ_r: getnewPC = $signed(Rdata1) < $signed(0) ? nextPC + 4 * Ed32 : nextPC;
             // Branch on Greater Than or Equal to Zero
-            BGEZ_r: getnewPC = Rdata1 >= 0 ? nextPC + 4 * Ed32 : nextPC;
+            BGEZ_r: getnewPC = $signed(Rdata1) >= $signed(0) ? nextPC + 4 * Ed32 : nextPC;
           endcase
         // Branch on Less Than or Equal to Zero
-        BLEZ: getnewPC = Rdata1 <= 0 ? nextPC + 4 * Ed32 : nextPC;
+        BLEZ: getnewPC = $signed(Rdata1) <= $signed(0) ? nextPC + 4 * Ed32 : nextPC;
         // Branch on Greater Than Zero
-        BGTZ: getnewPC = Rdata1 > 0 ? nextPC + 4 * Ed32 : nextPC;
+        BGTZ: getnewPC = $signed(Rdata1) > $signed(0) ? nextPC + 4 * Ed32 : nextPC;
         // Others
         default: getnewPC = nextPC;
       endcase
