@@ -84,6 +84,8 @@ opcode = {
     'JAL':   '000011',
     'BEQ':   '000100',
     'BNE':   '000101',
+    'BLTZ':  ('000001', '00000'),
+    'BGEZ':  ('000001', '00001'),
     'BLEZ':  '000110',
     'BGTZ':  '000111'
 }
@@ -127,10 +129,9 @@ def main(argv):
                 label = line_split[0]
                 labels[label] = i
                 inss.append(line_split[1].strip())
-    print('labels:', labels)
+    # print('labels:', labels)
 
     for i, ins in enumerate(inss):
-        print('ins:', ins)
         if len(ins) == 0:
             if i < len(inss) - 1:
                 if i == 0:
@@ -155,12 +156,18 @@ def main(argv):
             r2 = registers[r2]
             bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
+        elif op in ('MULT', 'DIV', 'MULTU', 'DIVU'):
+            r0, r1 = others
+            r0 = registers[r0]
+            r1 = registers[r1]
+            bits = bits_concat('000000', r0, r1, '00000', '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
         elif op in ('SLLV', 'SRLV', 'SRAV'):
             r0, r1, r2 = others
             r0 = registers[r0]
             r1 = registers[r1]
             r2 = registers[r2]
-            bits = bits_concat('000000', r1, r2, r0, '00000', opcode[op],
+            bits = bits_concat('000000', r2, r1, r0, '00000', opcode[op],
                                split_by_underscore=split_by_underscore)
         elif op in ('SLL', 'SRL', 'SRA'):
             r0, r1, shamt = others
@@ -185,19 +192,37 @@ def main(argv):
             offset = format(int(offset), '016b')
             bits = bits_concat(opcode[op], r1, r0, offset,
                                split_by_underscore=split_by_underscore)
+        elif op in ('MFHI', 'MFLO'):
+            r0 = others[0]
+            r0 = registers[r0]
+            bits = bits_concat('000000', '00000', '00000', r0, '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
+        elif op in ('MTHI', 'MTLO'):
+            r0 = others[0]
+            r0 = registers[r0]
+            bits = bits_concat('000000', r0, '00000', '00000', '00000', opcode[op],
+                               split_by_underscore=split_by_underscore)
         elif op in ('BEQ', 'BNE'):
             r0, r1, label = others
             r0 = registers[r0]
             r1 = registers[r1]
             offset = labels[label]
-            offset = format(int(offset) - i - 1, '016b')
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
             bits = bits_concat(opcode[op], r0, r1, offset,
                                split_by_underscore=split_by_underscore)
-        elif op in ('BGEZ', 'BGTZ', 'BLEZ', 'BLTZ'):
-            r0, offset = others
+        elif op in ('BGTZ', 'BLEZ'):
+            r0, label = others
             r0 = registers[r0]
-            offset = format(int(offset) - i - 1, '016b')
+            offset = labels[label]
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
             bits = bits_concat(opcode[op], r0, '00000', offset,
+                               split_by_underscore=split_by_underscore)
+        elif op in ('BGEZ', 'BLTZ'):
+            r0, label = others
+            r0 = registers[r0]
+            offset = labels[label]
+            offset = format((int(offset) - i - 1) & 0xffff, '016b')
+            bits = bits_concat(opcode[op][0], r0, opcode[op][1], offset,
                                split_by_underscore=split_by_underscore)
         elif op in ('J', 'JAL'):
             label = others[0]
@@ -219,6 +244,8 @@ def main(argv):
         else:
             print(op, others)
             raise NotImplementedError
+
+        print(f'{i}: {ins} => {bits}')
 
         if i == 0:
             with output.open('w') as f:

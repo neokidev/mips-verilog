@@ -1,11 +1,14 @@
-ADDI r1, r0, 32
-ADDI r8, r0, 1
-JAL 4
-J 10
-ADDI r8, r8, 2
-JALR r1, r2
-ADDI r8, r8, 4
-JR   $ra
-ADDI r8, r8, 3
-JR   r2
-ADDI r8, r8, 5
+ADDI  $t0, $zero, 11
+ADDI  $t1, $zero, 3
+MULT  $t0, $t1
+MFHI  $s0
+MFLO  $s1
+DIV   $t0, $t1
+MFHI  $s2
+MFLO  $s3
+MULTU $t0, $t1
+MFHI  $s4
+MFLO  $s5
+DIVU  $t0, $t1
+MFHI  $s6
+MFLO  $s7

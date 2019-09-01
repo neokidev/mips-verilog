@@ -1,0 +1,7 @@
+    ADDI  $t0, $zero, 3
+    ADDI  $t1, $zero, 0
+L1: ADDI  $t1, $t1, 1
+    BNE   $t0, $t1, L1
+    BEQ   $t0, $t1, N1
+    ADDI  $t1, $t1, 1
+N1: ADDI  $t1, $t1, 1

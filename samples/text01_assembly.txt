@@ -1,4 +1,12 @@
+ADDI  $s7, $zero, 20
+ADDI  $t0, $zero, 1
+SW    $t0, 0($s7)
+ADDI  $t0, $zero, 2
+SW    $t0, 4($s7)
+ADDI  $t0, $zero, 3
+SW    $t0, 8($s7)
 LW    $s0, 0($s7)
 LW    $s1, 4($s7)
 ADDI  $t0, $s7, 8
 SW    $s1, 0($t0)
+LW    $s1, 8($s7)

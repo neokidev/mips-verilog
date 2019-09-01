@@ -24,13 +24,20 @@ module MA (
       getWdata = 0;
     end
     else begin
-      case (Ins[31:26])
-        LW: getWdata = Rdata;
-        SW: getWdata = Rdata2;
-        JAL: getWdata = nextPC;
-        JALR: getWdata = nextPC;
-        default: getWdata = Result;
-      endcase
+      if (Ins[31:26] == R_FORM) begin
+        case (Ins[5:0])
+          JALR: getWdata = nextPC;
+          default: getWdata = Result;
+        endcase
+      end
+      else begin
+        case (Ins[31:26])
+          LW: getWdata = Rdata;
+          SW: getWdata = Rdata2;
+          JAL: getWdata = nextPC;
+          default: getWdata = Result;
+        endcase
+      end
     end
   endfunction
 endmodule
